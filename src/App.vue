@@ -42,8 +42,6 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 export default {
   methods: {
-    //this method allows a new user to sign up the system. Once done, the user receives an email
-    //asking for account validation. Once the validation made the user is added to the system
     async register() {
       try {
         const { user, session, error } = await supabase.auth.signUp({
@@ -56,7 +54,6 @@ export default {
         alert(error.error_description || error.message);
       }
     },
-    //this method allows the already registred user to log in the system.
     async login() {
       try {
         const { user, session, error } = await supabase.auth.signIn({
