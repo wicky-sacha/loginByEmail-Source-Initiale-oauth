@@ -36,6 +36,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 
+
 export default {
   methods: {
     //this method allows a new user to sign up the system. Once done, the user receives an email
@@ -88,7 +89,7 @@ export default {
       }
     })
   }
-}
+}  
 </script>
 
 <style>
@@ -107,7 +108,6 @@ header .hidden {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-
   font-weight: normal;
 }
 
