@@ -37,6 +37,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 
 
+
 export default {
   methods: {
     //this method allows a new user to sign up the system. Once done, the user receives an email
