@@ -5,30 +5,13 @@ import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/Supaba
 </script>
 
 <template>
-  <header>
-    <router-link to="/">Go to Home</router-link>
-    <img alt="Logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-    <div class="wrapper" id="signOut">
-      <div>
-        <SignIn msg="User, please sign in !" />
-      </div>
-      <label>email: </label><br>
-      <input type="email" required v-model="email" placeholder="username@domain.tld"><br>
-      <label>password: </label><br>
-      <input type="password" required v-model="passwd"><br>
-      <button v-on:click="register()">sign up</button>
-      <button v-on:click="login()">sign in</button>
-      <button v-on:click="reset()">reset</button>
-      <button v-on:click="logout()">sign out</button>
-      <p>
-        <label id="status"> You are not yet connected </label><br>
-      </p>
-    </div>
-  </header>
-
-  <main>
-
-  </main>
+  <h1>{{ msg }}</h1>
+  <p>
+    Please login if you have an account or register :
+  </p>
+  <button @click="login()">Sign In</button><br>
+  <button @click="logout()">Sign Out</button><br>
+  <label id="status">You are not yet logged ! </label>
 </template>
 
 <script>
@@ -37,46 +20,44 @@ const SUPABASE_URL = 'https://nfkbfkpimlfcegkuzjca.supabase.co'
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ma2Jma3BpbWxmY2Vna3V6amNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjM1OTU3NzgsImV4cCI6MTk3OTE3MTc3OH0.gas84-8B7VMq1xTs3V-K42u_aFM801gvZmXhC2dDTVA'
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session == null) {
+    document.getElementById('status').innerHTML = 'You are not logged !!!';
+  } else {
+    //alert('session value: ' + JSON.stringify(session)) 
+    document.getElementById('status').innerHTML = 'You are logged with the email: ' + session.user.email;
+  }
+})
 
 
 
 export default {
   methods: {
-    async register() {
+    //this method allows to release the connexion with the Google account 
+    async logout() {
       try {
-        const { user, session, error } = await supabase.auth.signUp({
-          email: this.email,
-          password: this.passwd,
-        });
+        const { user, session, error } = await supabase.auth.signOut();
         if (error) throw error;
-        document.getElementById('status').innerHTML = 'Please validate the received email !'
+        document.getElementById('status').innerHTML = 'You are disconnected !'
       } catch (error) {
         alert(error.error_description || error.message);
       }
     },
+    //this method allows to log in the system using Google provider 
+
     async login() {
       try {
         const { user, session, error } = await supabase.auth.signIn({
-          email: this.email,
-          password: this.passwd,
+          provider: 'google',
         });
         if (error) throw error;
-        document.getElementById('status').innerHTML = 'You are now logged !'
       } catch (error) {
         alert(error.error_description || error.message);
       }
     },
-    async reset() {
-      const { data, error } = await supabase.auth.api.resetPasswordForEmail(
-        this.email
-      )
-    },
-    async logout() {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      document.getElementById('status').innerHTML = 'You are now logged out !'
-    },
   },
+
+
   mounted() {
     supabase.auth.onAuthStateChange(async (event, session) => {
       if (event == 'PASSWORD_RECOVERY') {
